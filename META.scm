@@ -1,8 +1,8 @@
 ;; SPDX-License-Identifier: AGPL-3.0-or-later
 ;; SPDX-FileCopyrightText: 2025 Jonathan D.A. Jewell
-;;; META.scm — template-repo
+;;; META.scm — obli-ssg
 
-(define-module (template-repo meta)
+(define-module (obli-ssg meta)
   #:export (architecture-decisions development-practices design-rationale))
 
 (define architecture-decisions
