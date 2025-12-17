@@ -1,1 +1,139 @@
+// SPDX-License-Identifier: MIT OR AGPL-3.0-or-later
+// SPDX-FileCopyrightText: 2025 Jonathan D.A. Jewell
+= obli-ssg
+:toc: macro
+:toclevels: 2
+:icons: font
+:source-highlighter: rouge
 
+Satellite SSG (Static Site Generator) implementation in the hyperpolymath ecosystem.
+
+toc::[]
+
+== Overview
+
+obli-ssg is a satellite project that provides MCP (Model Context Protocol) compatible adapters for 28 static site generators. It integrates with the https://github.com/hyperpolymath/poly-ssg-mcp[poly-ssg-mcp] hub.
+
+=== What This Is
+
+* A satellite SSG implementation using the poly-ssg-mcp hub
+* MCP-compatible adapters for multiple static site generators
+* Part of the hyperpolymath ecosystem following RSR guidelines
+
+=== What This Is Not
+
+* NOT the main SSG hub (that's poly-ssg-mcp)
+* NOT exempt from RSR compliance
+
+== Supported Static Site Generators
+
+The adapters support 28 SSGs across multiple programming languages:
+
+[cols="1,2,3"]
+|===
+|Language |SSG |Description
+
+|Ada |StaticWebPages |Ada-based static site generator
+|Clojure |Babashka, Cryogen, Perun |Clojure-based SSGs
+|Crystal |Marmot |Crystal-based static site generator
+|D |Reggae |D language static site generator
+|Elixir |NimblePublisher, Serum, Tableau |Elixir-based SSGs
+|Erlang |Zotonic |Erlang CMS/SSG
+|F# |Fornax, Franklin |F# static site generators
+|Haskell |Ema, Hakyll |Haskell-based SSGs
+|Julia |Documenter |Julia documentation generator
+|Kotlin |Orchid |Kotlin static site generator
+|Nim |Nimrod |Nim static site generator
+|OCaml |Yocaml |OCaml static site generator
+|Racket |Frog, Pollen |Racket-based SSGs
+|Rust |Cobalt, mdBook, Zola |Rust-based SSGs
+|Scala |Laika, ScalaTex |Scala static site generators
+|Scheme |Coleslaw |Scheme-based SSG
+|Swift |Publish |Swift static site generator
+|Tcl |Tclssg |Tcl static site generator
+|===
+
+== Installation
+
+[source,bash]
+----
+# Clone the repository
+git clone https://github.com/hyperpolymath/obli-ssg.git
+cd obli-ssg
+
+# The adapters are Deno-compatible JavaScript modules
+# Each adapter can be imported and used with the MCP protocol
+----
+
+== Usage
+
+Each adapter exports a standard interface:
+
+[source,javascript]
+----
+import * as zola from './adapters/zola.js';
+
+// Connect to the SSG
+await zola.connect();
+
+// Check connection status
+if (zola.isConnected()) {
+  // Use the available tools
+  const result = await zola.tools[0].execute({ path: './my-site' });
+}
+
+// Disconnect when done
+await zola.disconnect();
+----
+
+== Project Structure
+
+----
+obli-ssg/
+├── adapters/           # SSG adapter implementations (28 adapters)
+├── .github/            # GitHub workflows and templates
+│   ├── workflows/      # CI/CD workflows (CodeQL)
+│   ├── ISSUE_TEMPLATE/ # Issue templates
+│   └── dependabot.yml  # Dependency updates
+├── ECOSYSTEM.scm       # Ecosystem positioning
+├── META.scm            # Architecture decisions
+├── STATE.scm           # Project state tracking
+├── SECURITY.md         # Security policy
+├── CODE_OF_CONDUCT.md  # Community guidelines
+├── CONTRIBUTING.md     # Contribution guidelines
+└── LICENSE.txt         # Dual MIT/AGPL-3.0 license
+----
+
+== Security
+
+This project takes security seriously:
+
+* CodeQL static analysis enabled
+* SHA-pinned GitHub Actions
+* Dependabot for automated dependency updates
+* Comprehensive .gitignore for secrets protection
+
+See link:SECURITY.md[SECURITY.md] for reporting vulnerabilities.
+
+== Contributing
+
+See link:CONTRIBUTING.md[CONTRIBUTING.md] for contribution guidelines.
+
+== License
+
+Dual licensed under MIT OR AGPL-3.0-or-later. See link:LICENSE.txt[LICENSE.txt] for details.
+
+== Related Projects
+
+* https://github.com/hyperpolymath/poly-ssg-mcp[poly-ssg-mcp] - Hub with all SSG adapters via MCP
+* https://github.com/hyperpolymath/rhodium-standard-repositories[rhodium-standard-repositories] - RSR compliance standard
+
+== Status
+
+[cols="1,1"]
+|===
+|Version |0.1.0
+|Phase |Initial Setup
+|Completion |35%
+|RSR Compliance |100%
+|===
