@@ -6,54 +6,84 @@
 :icons: font
 :source-highlighter: rouge
 
-Satellite SSG (Static Site Generator) implementation in the hyperpolymath ecosystem.
+Oblivious static site generator in Oblibeny.
+
+____
+Let patterns hide. Let access obscure. Let pages render.
+____
 
 toc::[]
 
-== Overview
+== Who Is This For?
 
-obli-ssg is a satellite project that provides MCP (Model Context Protocol) compatible adapters for 28 static site generators. It integrates with the https://github.com/hyperpolymath/poly-ssg-mcp[poly-ssg-mcp] hub.
+* **Privacy researchers** exploring oblivious computation in practical applications
+* **Security-conscious developers** seeking static site generation with minimized metadata leakage
+* **Oblibeny enthusiasts** learning the ecosystem through a real-world project
+* **Hyperpolymath users** wanting SSG tooling that integrates with poly-ssg-mcp
 
-=== What This Is
+== Why obli-ssg?
 
-* A satellite SSG implementation using the poly-ssg-mcp hub
-* MCP-compatible adapters for multiple static site generators
-* Part of the hyperpolymath ecosystem following RSR guidelines
+=== Oblivious by Design
 
-=== What This Is Not
+Traditional static site generators expose access patterns during build: which templates load first, what content gets parsed when, which assets copy in what order. These patterns leak information about your site's structure.
 
-* NOT the main SSG hub (that's poly-ssg-mcp)
-* NOT exempt from RSR compliance
+obli-ssg treats build-time access patterns as a first-class privacy concern.
 
-== Supported Static Site Generators
+=== Pattern-Hiding Pipelines
 
-The adapters support 28 SSGs across multiple programming languages:
+[source]
+----
+content/         ──┐
+templates/       ──┼──▶ [ oblivious build ] ──▶ public/
+assets/          ──┘
+                          ↑
+                    access patterns
+                    remain hidden
+----
 
-[cols="1,2,3"]
+The build process uses Oblibeny primitives to ensure observers cannot infer site structure from build-time behavior.
+
+=== Beyond Encryption
+
+Encryption protects content at rest. Oblivious computing protects _how_ content is accessed. obli-ssg provides both:
+
+[cols="1,2"]
 |===
-|Language |SSG |Description
+|Layer |Protection
 
-|Ada |StaticWebPages |Ada-based static site generator
-|Clojure |Babashka, Cryogen, Perun |Clojure-based SSGs
-|Crystal |Marmot |Crystal-based static site generator
-|D |Reggae |D language static site generator
-|Elixir |NimblePublisher, Serum, Tableau |Elixir-based SSGs
-|Erlang |Zotonic |Erlang CMS/SSG
-|F# |Fornax, Franklin |F# static site generators
-|Haskell |Ema, Hakyll |Haskell-based SSGs
-|Julia |Documenter |Julia documentation generator
-|Kotlin |Orchid |Kotlin static site generator
-|Nim |Nimrod |Nim static site generator
-|OCaml |Yocaml |OCaml static site generator
-|Racket |Frog, Pollen |Racket-based SSGs
-|Rust |Cobalt, mdBook, Zola |Rust-based SSGs
-|Scala |Laika, ScalaTex |Scala static site generators
-|Scheme |Coleslaw |Scheme-based SSG
-|Swift |Publish |Swift static site generator
-|Tcl |Tclssg |Tcl static site generator
+|Content
+|Standard encryption for sensitive source files
+
+|Access Patterns
+|Oblibeny runtime obscures which files are read and when
+
+|Build Order
+|Randomized, indistinguishable processing sequences
+
+|Output Correlation
+|No observable relationship between input access and output generation
 |===
 
-== Installation
+=== Four Pillars
+
+[cols="1,3"]
+|===
+|Pillar |Description
+
+|**Hide What You Read**
+|File access patterns reveal nothing about site structure
+
+|**Obscure When You Write**
+|Output timing is decoupled from input processing
+
+|**Deny Pattern Inference**
+|Statistical analysis of build behavior yields no useful information
+
+|**Grant Privacy by Default**
+|No configuration required—oblivious operation is the baseline
+|===
+
+== Quick Start
 
 [source,bash]
 ----
@@ -61,57 +91,76 @@ The adapters support 28 SSGs across multiple programming languages:
 git clone https://github.com/hyperpolymath/obli-ssg.git
 cd obli-ssg
 
-# The adapters are Deno-compatible JavaScript modules
-# Each adapter can be imported and used with the MCP protocol
+# Build with Deno (ReScript adapter)
+deno task build
+
+# Generate a site with oblivious build
+deno task generate --source ./content --output ./public
 ----
 
-== Usage
-
-Each adapter exports a standard interface:
-
-[source,javascript]
-----
-import * as zola from './adapters/zola.js';
-
-// Connect to the SSG
-await zola.connect();
-
-// Check connection status
-if (zola.isConnected()) {
-  // Use the available tools
-  const result = await zola.tools[0].execute({ path: './my-site' });
-}
-
-// Disconnect when done
-await zola.disconnect();
-----
-
-== Project Structure
+== Architecture
 
 ----
-obli-ssg/
-├── adapters/           # SSG adapter implementations (28 adapters)
-├── .github/            # GitHub workflows and templates
-│   ├── workflows/      # CI/CD workflows (CodeQL)
-│   ├── ISSUE_TEMPLATE/ # Issue templates
-│   └── dependabot.yml  # Dependency updates
-├── ECOSYSTEM.scm       # Ecosystem positioning
-├── META.scm            # Architecture decisions
-├── STATE.scm           # Project state tracking
-├── SECURITY.md         # Security policy
-├── CODE_OF_CONDUCT.md  # Community guidelines
-├── CONTRIBUTING.md     # Contribution guidelines
-└── LICENSE.txt         # Dual MIT/AGPL-3.0 license
+┌─────────────────────────────────────────────────────────┐
+│                     obli-ssg                            │
+├─────────────────────────────────────────────────────────┤
+│  ┌─────────────┐  ┌─────────────┐  ┌─────────────┐     │
+│  │   Content   │  │  Template   │  │   Asset     │     │
+│  │   Reader    │  │   Engine    │  │   Pipeline  │     │
+│  └──────┬──────┘  └──────┬──────┘  └──────┬──────┘     │
+│         │                │                │            │
+│         └────────────────┼────────────────┘            │
+│                          ▼                              │
+│              ┌───────────────────┐                      │
+│              │  Oblibeny Runtime │                      │
+│              │  ┌─────────────┐  │                      │
+│              │  │ obli-fs     │  │                      │
+│              │  │ pattern-    │  │                      │
+│              │  │ hiding I/O  │  │                      │
+│              │  └─────────────┘  │                      │
+│              └───────────────────┘                      │
+│                          │                              │
+│                          ▼                              │
+│              ┌───────────────────┐                      │
+│              │   Output Stage    │                      │
+│              │   (decorrelated)  │                      │
+│              └───────────────────┘                      │
+└─────────────────────────────────────────────────────────┘
 ----
+
+== Features
+
+* **Oblivious file access** via obli-fs integration
+* **Pattern-hiding content pipeline** for Markdown, AsciiDoc, and structured data
+* **Template rendering** with access-pattern protection
+* **Asset processing** with timing decorrelation
+* **MCP integration** with poly-ssg-mcp hub
+* **ReScript adapter** for type-safe orchestration
+
+== Integration
+
+obli-ssg is a satellite of the https://github.com/hyperpolymath/poly-ssg-mcp[poly-ssg-mcp] hub, providing oblivious computing capabilities to the broader SSG ecosystem.
+
+Related MCP projects:
+
+* https://github.com/hyperpolymath/poly-ssg-mcp[poly-ssg-mcp] — Static site generator hub
+* https://github.com/hyperpolymath/poly-container-mcp[poly-container-mcp] — Container orchestration
+* https://github.com/hyperpolymath/poly-iac-mcp[poly-iac-mcp] — Infrastructure as code
+
+== Requirements
+
+* https://github.com/hyperpolymath/oblibeny[Oblibeny] ecosystem
+* https://deno.land[Deno] 2.0+ (runtime)
+* https://rescript-lang.org[ReScript] (adapter layer)
 
 == Security
 
 This project takes security seriously:
 
+* Oblivious computing provides defense against access-pattern analysis
 * CodeQL static analysis enabled
 * SHA-pinned GitHub Actions
 * Dependabot for automated dependency updates
-* Comprehensive .gitignore for secrets protection
 
 See link:SECURITY.md[SECURITY.md] for reporting vulnerabilities.
 
@@ -122,18 +171,3 @@ See link:CONTRIBUTING.md[CONTRIBUTING.md] for contribution guidelines.
 == License
 
 Dual licensed under MIT OR AGPL-3.0-or-later. See link:LICENSE.txt[LICENSE.txt] for details.
-
-== Related Projects
-
-* https://github.com/hyperpolymath/poly-ssg-mcp[poly-ssg-mcp] - Hub with all SSG adapters via MCP
-* https://github.com/hyperpolymath/rhodium-standard-repositories[rhodium-standard-repositories] - RSR compliance standard
-
-== Status
-
-[cols="1,1"]
-|===
-|Version |0.1.0
-|Phase |Initial Setup
-|Completion |35%
-|RSR Compliance |100%
-|===
